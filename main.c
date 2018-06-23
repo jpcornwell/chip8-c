@@ -1,6 +1,15 @@
 
 #include <stdio.h>
+#include <stdlib.h>
+
+#include "core.h"
 
 int main(int argc, char *argv[]) {
-    printf("Hello\n");
+
+    if (argc != 2) {
+        printf("Wrong number of arguments\n");
+        exit(1);
+    }
+
+    load_rom(argv[1]);
 }

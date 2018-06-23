@@ -1,3 +1,3 @@
 
 main: main.c
-	gcc main.c -Wall -Wextra -o chip8
+	gcc main.c core.c -Wall -Wextra -o chip8

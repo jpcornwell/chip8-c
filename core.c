@@ -4,6 +4,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+#include "screen.h"
+
 typedef enum OpKind {
     OP_CLEAR,
     OP_RETURN,
@@ -79,162 +81,162 @@ void get_op_info(OpKind *kind, int *nnn, int *n, int *x, int *y, int *kk) {
         *kind = OP_RETURN;
         return;
     }
-    // 1NNN
+    // 1nnn
     if (op >> 12 == 0x1) {
         *kind = OP_JUMP;
         return;
     }
-    // 2NNN
+    // 2nnn
     if (op >> 12 == 0x2) {
         *kind = OP_CALL;
         return;
     }
-    // 3XNN
+    // 3xkk
     if (op >> 12 == 0x3) {
         *kind = OP_SKIP_EQ_VAL;
         return;
     }
-    // 4XNN
+    // 4xkk
     if (op >> 12 == 0x4) {
         *kind = OP_SKIP_NE_VAL;
         return;
     }
-    // 5XY0
+    // 5xy0
     if (op >> 12 == 0x5) {
         *kind = OP_SKIP_EQ_REG;
         return;
     }
-    // 6XNN
+    // 6xkk
     if (op >> 12 == 0x6) {
         *kind = OP_LOAD_VAL;
         return;
     }
-    // 7XNN
+    // 7xkk
     if (op >> 12 == 0x7) {
         *kind = OP_ADD_VAL;
         return;
     }
-    // 8XY0
+    // 8xy0
     if (op >> 12 == 0x8 && (op & 0xF) == 0x0) {
         *kind = OP_LOAD_REG;
         return;
     }
-    // 8XY1
+    // 8xy1
     if (op >> 12 == 0x8 && (op & 0xF) == 0x1) {
         *kind = OP_OR;
         return;
     }
-    // 8XY2
+    // 8xy2
     if (op >> 12 == 0x8 && (op & 0xF) == 0x2) {
         *kind = OP_AND;
         return;
     }
-    // 8XY3
+    // 8xy3
     if (op >> 12 == 0x8 && (op & 0xF) == 0x3) {
         *kind = OP_XOR;
         return;
     }
-    // 8XY4
+    // 8xy4
     if (op >> 12 == 0x8 && (op & 0xF) == 0x4) {
         *kind = OP_ADD_REG;
         return;
     }
-    // 8XY5
+    // 8xy5
     if (op >> 12 == 0x8 && (op & 0xF) == 0x5) {
         *kind = OP_SUB;
         return;
     }
-    // 8XY6
+    // 8xy6
     if (op >> 12 == 0x8 && (op & 0xF) == 0x6) {
         *kind = OP_SHIFT_R;
         return;
     }
-    // 8XY7
+    // 8xy7
     if (op >> 12 == 0x8 && (op & 0xF) == 0x7) {
         *kind = OP_SUBN;
         return;
     }
-    // 8XYE
+    // 8xyE
     if (op >> 12 == 0x8 && (op & 0xF) == 0xE) {
         *kind = OP_SHIFT_L;
         return;
     }
-    // 9XY0
+    // 9xy0
     if (op >> 12 == 0x9) {
         *kind = OP_SKIP_NE_REG;
         return;
     }
-    // ANNN
+    // Annn
     if (op >> 12 == 0xA) {
         *kind = OP_LOAD_ADDR;
         return;
     }
-    // BNNN
+    // Bnnn
     if (op >> 12 == 0xB) {
         *kind = OP_JUMP_OFFSET;
         return;
     }
-    // CXNN
+    // Cxkk
     if (op >> 12 == 0xC) {
         *kind = OP_RANDOM;
         return;
     }
-    // DXYN
+    // Dxyn
     if (op >> 12 == 0xD) {
         *kind = OP_DRAW;
         return;
     }
-    // EX9E
+    // Ex9E
     if (op >> 12 == 0xE && (op & 0xFF) == 0x9E) {
         *kind = OP_SKIP_KEY_PRESSED;
         return;
     }
-    // EXA1
+    // ExA1
     if (op >> 12 == 0xE && (op & 0xFF) == 0xA1) {
         *kind = OP_SKIP_KEY_NOT_PRESSED;
         return;
     }
-    // FX07
+    // Fx07
     if (op >> 12 == 0xF && (op & 0xFF) == 0x07) {
         *kind = OP_LOAD_DELAY;
         return;
     }
-    // FX0A
+    // Fx0A
     if (op >> 12 == 0xF && (op & 0xFF) == 0x0A) {
         *kind = OP_WAIT_KEY_PRESS;
         return;
     }
-    // FX15
+    // Fx15
     if (op >> 12 == 0xF && (op & 0xFF) == 0x15) {
         *kind = OP_SET_DELAY;
         return;
     }
-    // FX18
+    // Fx18
     if (op >> 12 == 0xF && (op & 0xFF) == 0x18) {
         *kind = OP_SET_SOUND;
         return;
     }
-    // FX1E
+    // Fx1E
     if (op >> 12 == 0xF && (op & 0xFF) == 0x1E) {
         *kind = OP_ADD_I;
         return;
     }
-    // FX29
+    // Fx29
     if (op >> 12 == 0xF && (op & 0xFF) == 0x29) {
         *kind = OP_LOAD_FONT;
         return;
     }
-    // FX33
+    // Fx33
     if (op >> 12 == 0xF && (op & 0xFF) == 0x33) {
         *kind = OP_LOAD_BCD;
         return;
     }
-    // FX55
+    // Fx55
     if (op >> 12 == 0xF && (op & 0xFF) == 0x55) {
         *kind = OP_LOAD_REGS;
         return;
     }
-    // FX65
+    // Fx65
     if (op >> 12 == 0xF && (op & 0xFF) == 0x65) {
         *kind = OP_SET_REGS;
         return;
@@ -258,10 +260,11 @@ void exec_op() {
     OpKind op;
 
     get_op_info(&op, &nnn, &n, &x, &y, &kk);
+    pc += 2;
 
     switch(op) {
         case OP_CLEAR:
-            op_not_implemented(op);
+            clear_display();
             break;
         case OP_RETURN:
             op_not_implemented(op);
@@ -276,13 +279,15 @@ void exec_op() {
             op_not_implemented(op);
             break;
         case OP_SKIP_NE_VAL:
-            op_not_implemented(op);
+            if (gen_regs[x] != kk) {
+                pc += 2;
+            }
             break;
         case OP_SKIP_EQ_REG:
             op_not_implemented(op);
             break;
         case OP_LOAD_VAL:
-            op_not_implemented(op);
+            gen_regs[x] = kk;
             break;
         case OP_ADD_VAL:
             op_not_implemented(op);
@@ -318,7 +323,7 @@ void exec_op() {
             op_not_implemented(op);
             break;
         case OP_LOAD_ADDR:
-            op_not_implemented(op);
+            i_reg = nnn;
             break;
         case OP_JUMP_OFFSET:
             op_not_implemented(op);
@@ -357,7 +362,9 @@ void exec_op() {
             op_not_implemented(op);
             break;
         case OP_LOAD_REGS:
-            op_not_implemented(op);
+            for (int i = 0; i <= x; i++) {
+                memory[i_reg + x] = gen_regs[x];
+            }
             break;
         case OP_SET_REGS:
             op_not_implemented(op);

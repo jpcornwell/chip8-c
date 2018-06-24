@@ -12,4 +12,5 @@ int main(int argc, char *argv[]) {
     }
 
     load_rom(argv[1]);
+    exec_op();
 }

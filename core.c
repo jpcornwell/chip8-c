@@ -270,13 +270,15 @@ void exec_op() {
             op_not_implemented(op);
             break;
         case OP_JUMP:
-            op_not_implemented(op);
+            pc = nnn;
             break;
         case OP_CALL:
             op_not_implemented(op);
             break;
         case OP_SKIP_EQ_VAL:
-            op_not_implemented(op);
+            if (gen_regs[x] == kk) {
+                pc += 2;
+            }
             break;
         case OP_SKIP_NE_VAL:
             if (gen_regs[x] != kk) {
@@ -284,25 +286,27 @@ void exec_op() {
             }
             break;
         case OP_SKIP_EQ_REG:
-            op_not_implemented(op);
+            if (gen_regs[x] == gen_regs[y]) {
+                pc += 2;
+            }
             break;
         case OP_LOAD_VAL:
             gen_regs[x] = kk;
             break;
         case OP_ADD_VAL:
-            op_not_implemented(op);
+            gen_regs[x] += kk;
             break;
         case OP_LOAD_REG:
-            op_not_implemented(op);
+            gen_regs[x] = gen_regs[y];
             break;
         case OP_OR:
-            op_not_implemented(op);
+            gen_regs[x] |= gen_regs[y];
             break;
         case OP_AND:
-            op_not_implemented(op);
+            gen_regs[x] &= gen_regs[y];
             break;
         case OP_XOR:
-            op_not_implemented(op);
+            gen_regs[x] ^= gen_regs[y];
             break;
         case OP_ADD_REG:
             op_not_implemented(op);
@@ -320,13 +324,15 @@ void exec_op() {
             op_not_implemented(op);
             break;
         case OP_SKIP_NE_REG:
-            op_not_implemented(op);
+            if (gen_regs[x] != gen_regs[y]) {
+                pc += 2;
+            }
             break;
         case OP_LOAD_ADDR:
             i_reg = nnn;
             break;
         case OP_JUMP_OFFSET:
-            op_not_implemented(op);
+            pc = nnn + gen_regs[0];
             break;
         case OP_RANDOM:
             op_not_implemented(op);
@@ -353,7 +359,7 @@ void exec_op() {
             op_not_implemented(op);
             break;
         case OP_ADD_I:
-            op_not_implemented(op);
+            i_reg += gen_regs[x];
             break;
         case OP_LOAD_FONT:
             op_not_implemented(op);
@@ -367,7 +373,10 @@ void exec_op() {
             }
             break;
         case OP_SET_REGS:
-            op_not_implemented(op);
+            for (int i = 0; i <= x; i++) {
+                gen_regs[x] = memory[i_reg + x];
+            }
+            i_reg += x + 1;
             break;
         default:
             printf("OP not handled: %d\n", op);

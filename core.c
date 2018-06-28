@@ -44,6 +44,7 @@ typedef enum OpKind {
 } OpKind;
 
 uint16_t stack[16];
+uint8_t sp = 0;
 uint16_t i_reg;
 uint16_t pc = 512;
 uint8_t gen_regs[16];
@@ -267,13 +268,23 @@ void exec_op() {
             clear_display();
             break;
         case OP_RETURN:
-            op_not_implemented(op);
+            if (sp == 0) {
+                printf("Pop operation encountered, but stack is empty.\n");
+                exit(1);
+            }
+            sp--;
+            pc = stack[sp];
             break;
         case OP_JUMP:
             pc = nnn;
             break;
         case OP_CALL:
-            op_not_implemented(op);
+            if (sp == 16) {
+                printf("Push operation encountered, but stack is full.\n");
+                exit(1);
+            }
+            stack[sp] = pc;
+            sp++;
             break;
         case OP_SKIP_EQ_VAL:
             if (gen_regs[x] == kk) {
@@ -338,7 +349,8 @@ void exec_op() {
             op_not_implemented(op);
             break;
         case OP_DRAW:
-            op_not_implemented(op);
+            gen_regs[0xf] = draw_sprite(gen_regs[x], gen_regs[y], n,
+                                        &memory[i_reg]);
             break;
         case OP_SKIP_KEY_PRESSED:
             op_not_implemented(op);

@@ -320,19 +320,27 @@ void exec_op() {
             gen_regs[x] ^= gen_regs[y];
             break;
         case OP_ADD_REG:
-            op_not_implemented(op);
-            break;
+            {
+                uint16_t ans = (uint16_t)gen_regs[x] + (uint16_t)gen_regs[y];
+                gen_regs[0xf] = (ans > 0xff) ? 1 : 0;
+                gen_regs[x] = ans & 0xff;
+                break;
+            }
         case OP_SUB:
-            op_not_implemented(op);
+            gen_regs[0xf] = (gen_regs[x] > gen_regs[y]) ? 1 : 0;
+            gen_regs[x] -= gen_regs[y];
             break;
         case OP_SHIFT_R:
-            op_not_implemented(op);
+            gen_regs[0xf] = (gen_regs[y] & 0x1) ? 1 : 0;
+            gen_regs[x] = gen_regs[y] >> 1;
             break;
         case OP_SUBN:
-            op_not_implemented(op);
+            gen_regs[0xf] = (gen_regs[y] > gen_regs[x]) ? 1 : 0;
+            gen_regs[x] = gen_regs[y] - gen_regs[x];
             break;
         case OP_SHIFT_L:
-            op_not_implemented(op);
+            gen_regs[0xf] = (gen_regs[y] >> 7) ? 1 : 0;
+            gen_regs[x] = gen_regs[y] << 1;
             break;
         case OP_SKIP_NE_REG:
             if (gen_regs[x] != gen_regs[y]) {

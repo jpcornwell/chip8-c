@@ -19,8 +19,9 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    load_rom(argv[1]);
+    init_core();
     init_display();
+    load_rom(argv[1]);
     while (1) {
         exec_op();
     }

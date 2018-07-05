@@ -1,10 +1,15 @@
 
-#include<stdbool.h>
-#include<stdint.h>
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
 
 #include "screen.h"
+
+#define ROM_MEM_START 512
+#define FONT_MEM_START 0
 
 typedef enum OpKind {
     OP_CLEAR,
@@ -46,7 +51,7 @@ typedef enum OpKind {
 uint16_t stack[16];
 uint8_t sp = 0;
 uint16_t i_reg;
-uint16_t pc = 512;
+uint16_t pc = ROM_MEM_START;
 uint8_t gen_regs[16];
 uint8_t memory[4096];
 
@@ -58,7 +63,7 @@ void load_rom(char *path) {
         exit(1);
     }
 
-    fread(memory + pc, 1, 4096, fp);
+    fread(memory + ROM_MEM_START, 1, 4096, fp);
 
     fclose(fp);
 }
@@ -252,6 +257,31 @@ void op_not_implemented(OpKind op) {
     exit(1);
 }
 
+void init_core(void) {
+    srand(time(NULL));
+
+    uint8_t font_data[] = {
+        0xf0, 0x90, 0x90, 0x90, 0xf0, // 0
+        0x20, 0x60, 0x20, 0x20, 0x70, // 1
+        0xf0, 0x10, 0xf0, 0x80, 0xf0, // 2
+        0xf0, 0x10, 0xf0, 0x10, 0xf0, // 3
+        0x90, 0x90, 0xf0, 0x10, 0x10, // 4
+        0xf0, 0x80, 0xf0, 0x10, 0xf0, // 5
+        0xf0, 0x80, 0xf0, 0x90, 0xf0, // 6
+        0xf0, 0x10, 0x20, 0x40, 0x40, // 7
+        0xf0, 0x90, 0xf0, 0x90, 0xf0, // 8
+        0xf0, 0x90, 0xf0, 0x10, 0xf0, // 9
+        0xf0, 0x90, 0xf0, 0x90, 0x90, // A
+        0xe0, 0x90, 0x30, 0x90, 0xe0, // B
+        0xf0, 0x80, 0x80, 0x80, 0xf0, // C
+        0xe0, 0x90, 0x90, 0x90, 0xe0, // D
+        0xf0, 0x80, 0xf0, 0x80, 0xf0, // E
+        0xf0, 0x80, 0xf0, 0x80, 0x80  // F
+    };
+
+    memcpy(&memory[FONT_MEM_START], font_data, sizeof(font_data));
+}
+
 void exec_op() {
     int nnn = 0;
     int n = 0;
@@ -354,7 +384,7 @@ void exec_op() {
             pc = nnn + gen_regs[0];
             break;
         case OP_RANDOM:
-            op_not_implemented(op);
+            gen_regs[x] = (rand() % 256) & kk;
             break;
         case OP_DRAW:
             gen_regs[0xf] = draw_sprite(gen_regs[x], gen_regs[y], n,
@@ -382,11 +412,16 @@ void exec_op() {
             i_reg += gen_regs[x];
             break;
         case OP_LOAD_FONT:
-            op_not_implemented(op);
+            i_reg = FONT_MEM_START + gen_regs[x] * 5;
             break;
         case OP_LOAD_BCD:
-            op_not_implemented(op);
-            break;
+            {
+                int val = gen_regs[x];
+                memory[i_reg+2] = val % 10;
+                memory[i_reg+1] = (val % 100) / 10;
+                memory[i_reg] = (val % 1000) / 100;
+                break;
+            }
         case OP_LOAD_REGS:
             for (int i = 0; i <= x; i++) {
                 memory[i_reg + x] = gen_regs[x];

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <time.h>
 
+#include "input.h"
 #include "screen.h"
 
 #define ROM_MEM_START 512
@@ -391,11 +392,23 @@ void exec_op() {
                                         &memory[i_reg]);
             break;
         case OP_SKIP_KEY_PRESSED:
-            op_not_implemented(op);
-            break;
+            {
+                SDL_PumpEvents();
+                const Uint8 *state = SDL_GetKeyboardState(NULL);
+                if (state[input_keys[gen_regs[x]]]) {
+                    pc += 2;
+                }
+                break;
+            }
         case OP_SKIP_KEY_NOT_PRESSED:
-            op_not_implemented(op);
-            break;
+            {
+                SDL_PumpEvents();
+                const Uint8 *state = SDL_GetKeyboardState(NULL);
+                if (!state[input_keys[gen_regs[x]]]) {
+                    pc += 2;
+                }
+                break;
+            }
         case OP_LOAD_DELAY:
             op_not_implemented(op);
             break;

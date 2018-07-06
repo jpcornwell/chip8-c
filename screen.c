@@ -54,7 +54,7 @@ void update_display(void) {
 
     SDL_RenderPresent(renderer);
 
-    SDL_Delay(1000);
+    SDL_Delay(50);
 }
 
 void clear_display(void) {

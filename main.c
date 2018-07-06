@@ -1,4 +1,5 @@
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -22,7 +23,16 @@ int main(int argc, char *argv[]) {
     init_core();
     init_display();
     load_rom(argv[1]);
-    while (1) {
+
+    bool quit = false;
+    SDL_Event e;
+    while (!quit) {
+        while(SDL_PollEvent(&e) != 0) {
+            if (e.type == SDL_QUIT) {
+                quit = true;
+            }
+        }
+
         exec_op();
     }
 }

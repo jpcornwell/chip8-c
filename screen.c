@@ -64,6 +64,8 @@ void clear_display(void) {
 
 uint8_t draw_sprite(uint8_t x, uint8_t y, int n, uint8_t *addr) {
     uint8_t is_collision = 0;
+    x = x % PIXEL_COUNT_WIDTH;
+    y = y % PIXEL_COUNT_HEIGHT;
     uint8_t orig_x = x;
 
     for (int i = 0; i < n; i++) {

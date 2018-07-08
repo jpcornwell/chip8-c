@@ -316,6 +316,7 @@ void exec_op() {
             }
             stack[sp] = pc;
             sp++;
+            pc = nnn;
             break;
         case OP_SKIP_EQ_VAL:
             if (gen_regs[x] == kk) {

@@ -8,6 +8,7 @@
 
 #include "input.h"
 #include "screen.h"
+#include "timers.h"
 
 #define ROM_MEM_START 512
 #define FONT_MEM_START 0
@@ -411,16 +412,16 @@ void exec_op() {
                 break;
             }
         case OP_LOAD_DELAY:
-            op_not_implemented(op);
+            gen_regs[x] = load_delay_timer();
             break;
         case OP_WAIT_KEY_PRESS:
             op_not_implemented(op);
             break;
         case OP_SET_DELAY:
-            op_not_implemented(op);
+            set_delay_timer(gen_regs[x]);
             break;
         case OP_SET_SOUND:
-            op_not_implemented(op);
+            set_sound_timer(gen_regs[x]);
             break;
         case OP_ADD_I:
             i_reg += gen_regs[x];

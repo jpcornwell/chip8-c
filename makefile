@@ -1,3 +1,3 @@
 
 main: main.c
-	gcc main.c core.c screen.c -Wall -Wextra -lSDL2 -o chip8
+	gcc main.c core.c screen.c timers.c -Wall -Wextra -lSDL2 -o chip8

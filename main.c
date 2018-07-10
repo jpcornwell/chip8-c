@@ -7,6 +7,7 @@
 
 #include "core.h"
 #include "screen.h"
+#include "timers.h"
 
 int main(int argc, char *argv[]) {
 
@@ -34,5 +35,7 @@ int main(int argc, char *argv[]) {
         }
 
         exec_op();
+        process_delay_timer();
+        process_sound_timer();
     }
 }

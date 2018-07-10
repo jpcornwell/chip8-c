@@ -9,6 +9,9 @@
 #include "screen.h"
 #include "timers.h"
 
+// 2 millisecond per tick is 500 Hz
+#define MS_PER_TICK 2
+
 int main(int argc, char *argv[]) {
 
     if (argc != 2) {
@@ -27,6 +30,8 @@ int main(int argc, char *argv[]) {
 
     bool quit = false;
     SDL_Event e;
+    Uint32 start_tick_time;
+    Uint32 elapsed_tick_time;
     while (!quit) {
         while(SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
@@ -34,8 +39,13 @@ int main(int argc, char *argv[]) {
             }
         }
 
+        start_tick_time = SDL_GetTicks();
         exec_op();
         process_delay_timer();
         process_sound_timer();
+        elapsed_tick_time = SDL_GetTicks() - start_tick_time;
+        if (elapsed_tick_time < MS_PER_TICK) {
+            SDL_Delay(MS_PER_TICK - elapsed_tick_time);
+        }
     }
 }

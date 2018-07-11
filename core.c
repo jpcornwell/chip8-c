@@ -254,11 +254,6 @@ void get_op_info(OpKind *kind, int *nnn, int *n, int *x, int *y, int *kk) {
     exit(1);
 }
 
-void op_not_implemented(OpKind op) {
-    printf("Opcode not implemented: %d\n", op);
-    exit(1);
-}
-
 void init_core(void) {
     srand(time(NULL));
 
@@ -415,7 +410,22 @@ void exec_op() {
             gen_regs[x] = load_delay_timer();
             break;
         case OP_WAIT_KEY_PRESS:
-            op_not_implemented(op);
+            {
+                int found = 0;
+                SDL_PumpEvents();
+                const Uint8 *state = SDL_GetKeyboardState(NULL);
+                for (int i = 0; i < 16; i++) {
+                    if (state[input_keys[i]]) {
+                        found = 1;
+                        gen_regs[x] = i;
+                        break;
+                    }
+                }
+                if (!found) {
+                    pc -= 2;
+                }
+                break;
+            }
             break;
         case OP_SET_DELAY:
             set_delay_timer(gen_regs[x]);

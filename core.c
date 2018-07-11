@@ -433,18 +433,19 @@ void exec_op() {
             {
                 int val = gen_regs[x];
                 memory[i_reg+2] = val % 10;
-                memory[i_reg+1] = (val % 100) / 10;
-                memory[i_reg] = (val % 1000) / 100;
+                memory[i_reg+1] = (val / 10) % 10;
+                memory[i_reg] = (val / 100) % 10;
                 break;
             }
         case OP_LOAD_REGS:
             for (int i = 0; i <= x; i++) {
-                memory[i_reg + x] = gen_regs[x];
+                memory[i_reg + i] = gen_regs[i];
             }
+            i_reg += x + 1;
             break;
         case OP_SET_REGS:
             for (int i = 0; i <= x; i++) {
-                gen_regs[x] = memory[i_reg + x];
+                gen_regs[i] = memory[i_reg + i];
             }
             i_reg += x + 1;
             break;

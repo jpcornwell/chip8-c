@@ -1,4 +1,7 @@
 
+#ifndef INPUT_H
+#define INPUT_H
+
 #include <SDL2/SDL.h>
 
 SDL_Scancode input_keys[] = {
@@ -19,3 +22,5 @@ SDL_Scancode input_keys[] = {
     SDL_SCANCODE_F,
     SDL_SCANCODE_V
 };
+
+#endif
